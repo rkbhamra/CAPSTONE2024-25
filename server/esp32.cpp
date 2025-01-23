@@ -5,6 +5,7 @@
 // serverURL: http://<ESP32_IP>/test_post
 const char* ssid = "";
 const char* password = "";
+const char* pythonServerIP = "12346789";
 
 AsyncWebServer server(80);
 
@@ -24,7 +25,8 @@ void setup() {
     String image_data = request->arg("image");
 
     HTTPClient http;
-    http.begin("http://<Python_Server_IP>:5000/test_post");
+    String serverURL = "http://" + String(pythonServerIP) + ":5000/test_post";
+    http.begin(serverURL);
     http.addHeader("Content-Type", "application/json");
 
     String json_payload = "{\"image\": \"" + image_data + "\"}";
