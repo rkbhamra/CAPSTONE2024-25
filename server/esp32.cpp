@@ -2,24 +2,20 @@
 #include <HTTPClient.h>
 #include <ESPAsyncWebServer.h>
 
-// serverURL: http://<ESP32_IP>/test_post
-const char* ssid = "";
-const char* password = "";
-const char* pythonServerIP = "12346789";
+const char* ssid = "ESP32-AP";
+const char* password = "123456789";
+const char* pythonServerIP = "123.456.789.0";
 
 AsyncWebServer server(80);
 
 void setup() {
   Serial.begin(115200);
-  WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-    Serial.println(WiFi.localIP()); // ESP32_IP
-  }
+  WiFi.softAP(ssid, password);
 
-  Serial.println("Connected to WiFi!");
+  Serial.println("Access Point Started");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.softAPIP());
 
   server.on("/test_post", HTTP_POST, [](AsyncWebServerRequest *request){
     String image_data = request->arg("image");
@@ -45,4 +41,5 @@ void setup() {
   server.begin();
 }
 
-void loop() { }
+// need this leave empty
+void loop() {}
