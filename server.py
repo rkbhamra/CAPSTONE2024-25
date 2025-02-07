@@ -5,26 +5,28 @@ import hand_gesture
 app = Flask(__name__)
 
 
-@app.route('/test_post', methods=['POST'])
-def post():
-    data = request.get_json()
-    img = hand_gesture.base64_to_image(data['image'])
-    gesture = hand_gesture.hand_inputs(img)
-
-    print('gesture :: ', gesture)
-    response = {
-        'message': 'post test',
-        'data': gesture
-    }
-    return jsonify(response)
-
-
 @app.route('/test_get', methods=['GET'])
 def get():
     response = {
         'message': 'get test',
         'data': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
     }
+    return jsonify(response)
+
+
+@app.route('/landmarks_post', methods=['POST'])
+def landmarks_post():
+    data = request.get_json()
+    img = hand_gesture.base64_to_image(data['image'])
+    _, landmarks = hand_gesture.hand_inputs(img)
+
+    response = {
+        'message': 'landmarks',
+        'data': landmarks
+    }
+
+    print(response)
+
     return jsonify(response)
 
 

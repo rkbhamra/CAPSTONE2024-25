@@ -16,6 +16,7 @@ def hand_inputs(frame):
     # using openCV to convert the image to RGB
     image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     result = hands.process(image_rgb)
+    landmark_list = []
 
     if result.multi_hand_landmarks:
         for hand_landmarks in result.multi_hand_landmarks:
@@ -34,7 +35,11 @@ def hand_inputs(frame):
 
             prev_y = current_y
 
-    return output
+            # add the landmarks to the list
+            for landmark in hand_landmarks.landmark:
+                landmark_list.append([landmark.x, landmark.y, landmark.z])
+
+    return output, landmark_list
 
 
 def base64_to_image(base64_string):
