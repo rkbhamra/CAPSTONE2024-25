@@ -1,34 +1,31 @@
 from flask import Flask, request, jsonify
-import time
+from flask_sock import Sock
 import hand_gesture
+import cv2
 
 app = Flask(__name__)
+sock = Sock(app)
 
 
-@app.route('/test_get', methods=['GET'])
-def get():
-    response = {
-        'message': 'get test',
-        'data': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-    }
-    return jsonify(response)
+@app.route('/')
+def index():
+    return 'Hello World!'
 
 
-@app.route('/landmarks_post', methods=['POST'])
-def landmarks_post():
-    data = request.get_json()
-    img = hand_gesture.base64_to_image(data['image'])
-    _, landmarks = hand_gesture.hand_inputs(img)
+@sock.route('/landmarks')
+def handle_landmarks(s):
+    while True:
+        data = s.receive()
+        if not data:
+            break
 
-    response = {
-        'message': 'landmarks',
-        'data': landmarks
-    }
+        img = hand_gesture.base64_to_image(data)
+        if img is None:
+            continue
 
-    print(response)
+        _, landmarks = hand_gesture.hand_inputs(img)
 
-    return jsonify(response)
+        s.send('{\'message\': \'landmarks\', \'data\': ' + str(landmarks) + '}')
 
 
-if __name__ == '__main__':
-    app.run(host='192.168.2.48', port=5000, debug=True)
+app.run(host='192.168.2.48', port=5000, debug=True)
