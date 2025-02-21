@@ -1,26 +1,43 @@
+import base64
+
 import cv2
 import mediapipe as mp
 import numpy as np
-import base64
+from mediapipe.tasks import python
 
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(max_num_hands=1)
+GestureRecognizer = mp.tasks.vision.GestureRecognizer
+GestureRecognizerOptions = mp.tasks.vision.GestureRecognizerOptions
+VisionRunningMode = mp.tasks.vision.RunningMode
+
+options = GestureRecognizerOptions(
+    base_options=mp.tasks.BaseOptions(model_asset_path='gesture_recognizer.task'),
+    running_mode=VisionRunningMode.IMAGE
+)
+
+recognizer = GestureRecognizer.create_from_options(options)
 
 
-def hand_inputs(frame):
-    # using openCV to convert the image to RGB
+def get_gesture(frame):
     image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    result = hands.process(image_rgb)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
+
+    result = recognizer.recognize(mp_image)
     landmark_list = []
+    gesture = ''
 
-    if result.multi_hand_landmarks:
-        for hand_landmarks in result.multi_hand_landmarks:
+    for hand_landmarks in result.hand_world_landmarks:
+        for landmark in hand_landmarks:
+            landmark_list.append({
+                'x': landmark.x + 0.5,
+                'y': landmark.y * 1.3 + 0.5,
+                'z': landmark.z
+            })
 
-            # add the landmarks to the list
-            for landmark in hand_landmarks.landmark:
-                landmark_list.append({'x': landmark.x, 'y': landmark.y, 'z': landmark.z})
+    if result.gestures:
+        gesture = result.gestures[0][0].category_name
 
-    return "x", landmark_list
+    return gesture, landmark_list
 
 
 def base64_to_image(base64_string):

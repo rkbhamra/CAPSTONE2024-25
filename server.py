@@ -23,9 +23,9 @@ def handle_landmarks(s):
         if img is None:
             continue
 
-        _, landmarks = hand_gesture.hand_inputs(img)
+        gesture, landmarks = hand_gesture.get_gesture(img)
 
-        s.send('{\'message\': \'landmarks\', \'data\': ' + str(landmarks) + '}')
+        s.send('{\'gesture\': \'' + gesture + '\', \'landmarks\': ' + str(landmarks) + '}')
 
 
 app.run(host='192.168.2.48', port=5000, debug=True)
