@@ -23,7 +23,13 @@ def handle_landmarks(s):
         if img is None:
             continue
 
+        # rotate image 90 degrees because the mobile camera is rotated for some reason
+        img = hand_gesture.rotate_image(img, 90)
+
         gesture, landmarks = hand_gesture.get_gesture(img)
+
+        # same as above, rotate landmarks 90 degrees
+        landmarks = hand_gesture.rotate_landmarks(landmarks, 0)
 
         s.send('{\'gesture\': \'' + gesture + '\', \'landmarks\': ' + str(landmarks) + '}')
 

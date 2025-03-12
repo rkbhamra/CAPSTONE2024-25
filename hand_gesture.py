@@ -29,8 +29,8 @@ def get_gesture(frame):
     for hand_landmarks in result.hand_world_landmarks:
         for landmark in hand_landmarks:
             landmark_list.append({
-                'x': landmark.x + 0.5,
-                'y': landmark.y * 1.3 + 0.5,
+                'x': landmark.x * 0.8 + 0.5,
+                'y': landmark.y * 0.5  + 0.5,
                 'z': landmark.z
             })
 
@@ -50,3 +50,22 @@ def base64_to_image(base64_string):
         return None
 
     return image
+
+
+def rotate_image(image, angle):
+    image_center = tuple(np.array(image.shape[1::-1]) / 2)
+    rot_mat = cv2.getRotationMatrix2D(image_center, angle, 1.0)
+    result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+    return result
+
+
+def rotate_landmarks(landmarks, angle):
+    for landmark in landmarks:
+        x = landmark['x'] - 0.5
+        y = landmark['y'] - 0.5
+        x_new = x * np.cos(np.radians(angle)) - y * np.sin(np.radians(angle))
+        y_new = x * np.sin(np.radians(angle)) + y * np.cos(np.radians(angle))
+        landmark['x'] = x_new + 0.5
+        landmark['y'] = y_new + 0.5
+
+    return landmarks
