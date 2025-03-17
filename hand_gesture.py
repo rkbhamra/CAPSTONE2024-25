@@ -29,8 +29,8 @@ def get_gesture(frame):
     for hand_landmarks in result.hand_world_landmarks:
         for landmark in hand_landmarks:
             landmark_list.append({
-                'x': landmark.x * 0.8 + 0.5,
-                'y': landmark.y * 0.5  + 0.5,
+                'x': landmark.x * 0.8 + 0.12,
+                'y': landmark.y * 0.5 + 0.88,
                 'z': landmark.z
             })
 
