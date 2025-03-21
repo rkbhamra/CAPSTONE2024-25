@@ -24,14 +24,16 @@ def handle_landmarks(s):
             continue
 
         # rotate image 90 degrees because the mobile camera is rotated for some reason
-        img = hand_gesture.rotate_image(img, 90)
+        # img = hand_gesture.rotate_image(img, 90)
 
         gesture, landmarks = hand_gesture.get_gesture(img)
 
         # same as above, rotate landmarks 90 degrees
-        landmarks = hand_gesture.rotate_landmarks(landmarks, 0)
+        # landmarks = hand_gesture.rotate_landmarks(landmarks, 0)
+        landmarks = hand_gesture.stretch_landmarks(landmarks, 1, 2)
 
         s.send('{\'gesture\': \'' + gesture + '\', \'landmarks\': ' + str(landmarks) + '}')
 
 
-app.run(host='192.168.2.48', port=5000, debug=True)
+app.run(host='10.0.0.206', port=5000, debug=True)
+# app.run(host='192.168.2.30', port=5000, debug=True)

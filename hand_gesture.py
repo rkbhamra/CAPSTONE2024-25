@@ -11,7 +11,7 @@ GestureRecognizerOptions = mp.tasks.vision.GestureRecognizerOptions
 VisionRunningMode = mp.tasks.vision.RunningMode
 
 options = GestureRecognizerOptions(
-    base_options=mp.tasks.BaseOptions(model_asset_path='gesture_recognizer.task'),
+    base_options=mp.tasks.BaseOptions(model_asset_path='gesture_recognizer_all.task'),
     running_mode=VisionRunningMode.IMAGE
 )
 
@@ -59,6 +59,15 @@ def rotate_image(image, angle):
     return result
 
 
+# def stretch_image(image, x_fact = 1, y_fact = 1):
+#     # image_center = tuple(np.array(image.shape[1::-1]) / 2)
+#     h, w = image.shape[:2]
+#     str_mat = cv2.resize(image, (x_fact * w, y_fact * h))
+#     # rot_mat = cv2.getRotationMatrix2D(image_center, angle, 1.0)
+#     # result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+#     return str_mat
+
+
 def rotate_landmarks(landmarks, angle):
     for landmark in landmarks:
         x = landmark['x'] - 0.5
@@ -67,5 +76,25 @@ def rotate_landmarks(landmarks, angle):
         y_new = x * np.sin(np.radians(angle)) + y * np.cos(np.radians(angle))
         landmark['x'] = x_new + 0.5
         landmark['y'] = y_new + 0.5
+
+    return landmarks
+
+
+def stretch_landmarks(landmarks, x_fact, y_fact):
+    if len(landmarks) == 0:
+        return landmarks
+    xavg, yavg = 0.0, 0.0
+    for landmark in landmarks:
+        xavg += landmark['x']
+        yavg += landmark['y']
+    xavg /= len(landmarks)
+    yavg /= len(landmarks)
+    for landmark in landmarks:
+        x = landmark['x'] - xavg
+        y = landmark['y'] - yavg
+        x_new = x * x_fact
+        y_new = y * y_fact
+        landmark['x'] = x_new + xavg
+        landmark['y'] = y_new + yavg
 
     return landmarks
