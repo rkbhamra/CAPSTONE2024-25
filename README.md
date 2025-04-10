@@ -38,4 +38,5 @@ python server.py
 
 ## App Setup
 
---
+- Visit the [Releases](https://github.com/rkbhamra/NG03_CAPSTONE2024-25/releases) page of the repository.
+- Download the latest `.apk` file available.
