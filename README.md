@@ -1,4 +1,6 @@
-# Server Setup
+# Capstone 2024-2025
+
+## Server Setup
 
 1. Clone the Repository
 
@@ -34,6 +36,6 @@ pip install -r requirements.txt
 python server.py
 ```
 
-# App Setup
+## App Setup
 
 --
